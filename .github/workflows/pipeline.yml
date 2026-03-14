@@ -1,0 +1,39 @@
+name: Pipeline CI/CD Shell
+
+# Define que o pipeline vai rodar sempre que houver um push na branch main
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # Estágio 1: Preparação e checagem de sintaxe
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+      
+      - name: Checar sintaxe do script shell
+        run: bash -n script.sh
+
+  # Estágio 2: Teste (Só roda se o build der certo)
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+        
+      - name: Dar permissão de execução
+        run: chmod +x script.sh
+        
+      - name: Executar o script
+        run: ./script.sh
+
+  # Estágio 3: Deploy simulado (Só roda se o test der certo)
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simular entrega contínua
+        run: echo "Deploy realizado com sucesso no ambiente simulado!"
